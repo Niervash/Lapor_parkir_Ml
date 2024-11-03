@@ -10,7 +10,7 @@ import pandas as pd
 # Flask constructor takes the name of the current module (__name__) as an argument.
 app = Flask(__name__)
 
-# Configuration
+# Configurationally define
 FILENAMEPETUGAS ='Model/Model_Ml/Petugas_Model.pkl'
 FILENAMEPARKIR = 'Model/Model_Ml/Parkir_liar_Model.pkl'
 
