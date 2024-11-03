@@ -18,15 +18,22 @@ def classification_report(model, X_test, y_test):
     report = sk_classification_report(y_test, y_pred, output_dict=True)
     return report
 
+import pandas as pd
+
 def result(FILENAME, Lokasi, Identitas_Petugas):
     try:
         # Load the model
         Model_loaded = read_model(FILENAME)
 
+        # Check if inputs are empty and handle accordingly
+        if not Lokasi or not Identitas_Petugas:
+            print("Error: Lokasi or Identitas_Petugas is empty.")
+            return [], [], []  # Return empty lists if inputs are invalid
+
         # Create a DataFrame for new data with the correct column names
         NewData = pd.DataFrame({
-            'Lokasi': Lokasi,
-            'Identitas Petugas': Identitas_Petugas  # Ensure column name matches the model's expectations
+            'Lokasi': Lokasi if isinstance(Lokasi, list) else [Lokasi],
+            'Identitas Petugas': Identitas_Petugas if isinstance(Identitas_Petugas, list) else [Identitas_Petugas]
         })
 
         # Make predictions
@@ -37,7 +44,7 @@ def result(FILENAME, Lokasi, Identitas_Petugas):
         print(NewData[['Lokasi', 'Identitas Petugas', 'Status Pelaporan']])
 
         # Return the necessary values
-        return Lokasi, NewData['Identitas Petugas'].tolist(), y_predictions.tolist()
+        return NewData['Lokasi'].tolist(), NewData['Identitas Petugas'].tolist(), y_predictions.tolist()
     except Exception as e:
         print(f"Error in result function: {str(e)}")
         return [], [], []

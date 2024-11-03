@@ -14,36 +14,6 @@ app = Flask(__name__)
 # Configurationally define
 FILENAMEPETUGAS ='Model/Model_Ml/Petugas_Model.pkl'
 FILENAMEPARKIR = 'Model/Model_Ml/Parkir_liar_Model.pkl'
-
-def read_model(filename):
-    Model = jb.load(filename)
-    print(f"Model loaded from {filename}")
-    return Model
-
-def result(FILENAME, Lokasi, Identitas_Petugas):
-    try:
-        # Load the model
-        Model_loaded = read_model(FILENAME)
-
-        # Create a DataFrame for new data with the correct column names
-        NewData = pd.DataFrame({
-            'Lokasi': Lokasi,
-            'Identitas Petugas': Identitas_Petugas  # Ensure column name matches the model's expectations
-        })
-
-        # Make predictions
-        y_predictions = Model_loaded.predict(NewData)
-
-        # Append predicted statuses to DataFrame
-        NewData['Status Pelaporan'] = y_predictions
-        print(NewData[['Lokasi', 'Identitas Petugas', 'Status Pelaporan']])
-
-        # Return the necessary values
-        return Lokasi, NewData['Identitas Petugas'].tolist(), y_predictions.tolist()
-    except Exception as e:
-        print(f"Error in result function: {str(e)}")
-        return [], [], []
-    
     
 @app.route('/')
 def hello_world():
@@ -60,7 +30,7 @@ def petugas_parkir():
         data = request.json
         lokasi = data.get('Lokasi')
         identitas_petugas = data.get('Identitas_Petugas')
-        
+        print(data)    
 
         # Pastikan lokasi dan identitas_petugas tidak kosong
         if not lokasi or not identitas_petugas:
