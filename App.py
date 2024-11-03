@@ -13,12 +13,11 @@ app = Flask(__name__)
 # Configuration
 FILENAMEPETUGAS = os.getenv('PETUGAS_MODEL_PATH', 'Model/Model_Ml/Petugas_Model.pkl')
 FILENAMEPARKIR = os.getenv('PARKIR_MODEL_PATH', 'Model/Model_Ml/Parkir_Model.pkl')  # Corrected filename
-Lokasi = ['Pusat Perbelanjaan', 'Gedung Perkantoran', 'Gedung Perkantoran']
-Petugas = ['Ada', 'Tidak Ada', 'Ada']
+
 
 @app.route('/')
 def hello_world():
-    return 'Hello World'
+    return 'Hello World !'
 
 # Petugas Parkir
 @app.route('/Petugas_parkir', methods=['POST'])
@@ -44,40 +43,6 @@ def petugas_parkir():
             'Status Pelaporan': y_predictions
         }
         return make_response(jsonify(response_data), 200)
-    except Exception as e:
-        return make_response(jsonify({'error': str(e)}), 500)
-
-@app.route('/Petugas_parkir/CM')
-def confusion_matrix():
-    try:
-        model = pt.read_model(FILENAMEPETUGAS)
-
-        # Create dummy test data (replace with actual test data)
-        y_test = ['Ada', 'Tidak Ada']  # Replace with actual test labels
-        X_test = pd.DataFrame({
-            'Lokasi': ['Pusat Perbelanjaan', 'Gedung Perkantoran'],
-            'Identitas Petugas': ['Ada', 'Tidak Ada']
-        })
-
-        cm = pt.confusion_matrix(model, X_test, y_test)
-        return make_response(jsonify({'Confusion Matrix': cm.tolist()}), 200)
-    except Exception as e:
-        return make_response(jsonify({'error': str(e)}), 500)
-
-@app.route('/Petugas_parkir/CR')
-def classification_report():
-    try:
-        model = pt.read_model(FILENAMEPETUGAS)
-
-        # Create dummy test data (replace with actual test data)
-        y_test = ['Ada', 'Tidak Ada']  # Replace with actual test labels
-        X_test = pd.DataFrame({
-            'Lokasi': ['Pusat Perbelanjaan', 'Gedung Perkantoran'],
-            'Identitas Petugas': ['Ada', 'Tidak Ada']
-        })
-
-        report = pt.classification_report(model, X_test, y_test)
-        return make_response(jsonify({'Classification Report': report}), 200)
     except Exception as e:
         return make_response(jsonify({'error': str(e)}), 500)
 
