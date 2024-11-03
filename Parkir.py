@@ -50,8 +50,8 @@ def result(FILENAME, Jenis_Kendaraan, Deskripsi_Masalah, waktu):
         print(NewData[['Deskripsi Masalah', 'Jenis Kendaraan', 'Status Pelaporan','waktu']])
 
         # Return the necessary values
-        return NewData['Deskripsi Masalah'].tolist(), NewData['Jenis Kendaraan'].tolist(),NewData['waktu'].tolist(), y_predictions.tolist()
+        return NewData['Deskripsi Masalah'].tolist(), NewData['Jenis Kendaraan'].tolist(), y_predictions.tolist(),NewData['waktu'].tolist()
     
     except Exception as e:
         print(f"Error in result function: {str(e)}")
-        return [], [], []
+        return [], [], [], []
