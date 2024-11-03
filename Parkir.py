@@ -41,10 +41,10 @@ def result(FILENAME, Jenis_Kendaraan, Deskripsi_Masalah, waktu):
         NewData['Status Pelaporan'] = y_predictions
 
         # Print relevant columns (adjust based on your needs)
-        print(NewData[['Deskripsi Masalah', 'Jenis Kendaraan', 'Status Pelaporan']])
+        print(NewData[['Deskripsi Masalah', 'Jenis Kendaraan', 'Status Pelaporan','waktu']])
 
         # Return the necessary values
-        return Deskripsi_Masalah, NewData['Jenis Kendaraan'].tolist(), y_predictions.tolist()
+        return NewData['Deskripsi Masalah'].tolist(), NewData['Jenis Kendaraan'].tolist(),NewData['waktu'].tolist(), y_predictions.tolist()
     except Exception as e:
         print(f"Error in result function: {str(e)}")
         return [], [], []
