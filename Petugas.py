@@ -18,8 +18,6 @@ def classification_report(model, X_test, y_test):
     report = sk_classification_report(y_test, y_pred, output_dict=True)
     return report
 
-import pandas as pd
-
 def result(FILENAME, Lokasi, Identitas_Petugas):
     try:
         # Load the model

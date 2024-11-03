@@ -61,7 +61,14 @@ def parkir_Liar():
         waktu = data.get('Waktu', [])
 
         # Call the Parkir result function
-        deskripsi_masalah, jenis_kendaraan, y_predictions = pl.result(FILENAMEPARKIR, jenis_kendaraan, deskripsi_masalah, waktu)
+        result_values = pl.result(FILENAMEPARKIR, jenis_kendaraan, deskripsi_masalah, waktu)
+        print("Result from pl.result():", result_values)  # Debugging output
+
+        # Unpack the values (ensure the number of values matches)
+        if len(result_values) == 3:
+            deskripsi_masalah, jenis_kendaraan, y_predictions = result_values
+        else:
+            raise ValueError("Unexpected number of return values from pl.result()")
 
         response_data = {
             'Deskripsi Masalah': deskripsi_masalah,
@@ -72,7 +79,7 @@ def parkir_Liar():
         return make_response(jsonify(response_data), 200)
     except Exception as e:
         return make_response(jsonify({'error': str(e)}), 500)
-
+        
 # Main driver function
 if __name__ == '__main__':
     # run() method of Flask class runs the application on the local development server.
