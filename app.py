@@ -66,9 +66,6 @@ def parkir_Liar():
 
 
         # Panggil fungsi result untuk mendapatkan prediksi
-        lokasi, identitas_petugas, y_predictions = pt.result(FILENAMEPETUGAS, lokasi, identitas_petugas)
-
-        # Call the Parkir result function
         Deskripsi_Masalah, Jenis_Kendaraan, waktu, y_predictions  = pl.result(FILENAMEPARKIR, jenis_kendaraan, deskripsi_masalah, waktu)
         
         response_data = {
@@ -82,7 +79,7 @@ def parkir_Liar():
     except Exception as e:
         return make_response(jsonify({'error': str(e)}), 500)
     
-    
+
 # Main driver function
 if __name__ == '__main__':
     # run() method of Flask class runs the application on the local development server.

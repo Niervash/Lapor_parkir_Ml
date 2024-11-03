@@ -33,7 +33,6 @@ def result(FILENAME, Lokasi, Identitas_Petugas):
             'Lokasi': Lokasi if isinstance(Lokasi, list) else [Lokasi],
             'Identitas Petugas': Identitas_Petugas if isinstance(Identitas_Petugas, list) else [Identitas_Petugas]
         })
-
         # Make predictions
         y_predictions = Model_loaded.predict(NewData)
 
