@@ -22,29 +22,36 @@ def result(FILENAME, Jenis_Kendaraan, Deskripsi_Masalah, waktu):
         # Load the model
         model_loaded = read_model(FILENAME)
 
+        errors = []
+        if not Jenis_Kendaraan:
+            errors.append("Jenis_Kendaraan is empty.")
+        if not Deskripsi_Masalah:
+            errors.append("Deskripsi_Masalah is empty.")
+        if not waktu:
+            errors.append("Waktu is empty.")
+
+        if errors:
+            print("Error:", " ".join(errors))
+            return [], [], []  # Return empty lists if inputs are invalid
+
         # Create a DataFrame for new data with the correct column names
         NewData = pd.DataFrame({
-            'Deskripsi Masalah': Deskripsi_Masalah,
-            'Jenis Kendaraan': Jenis_Kendaraan,
-            'Waktu': waktu  # Ensure column name matches the model's expectations
+            'Deskripsi Masalah': Deskripsi_Masalah if isinstance(Deskripsi_Masalah, list) else [Deskripsi_Masalah],
+            'Jenis Kendaraan': Jenis_Kendaraan if isinstance(Jenis_Kendaraan, list) else [Jenis_Kendaraan],
+            'waktu': waktu if isinstance(waktu, list) else [waktu] 
         })
-
-        # Check for necessary columns before prediction
-        required_columns = ['Deskripsi Masalah', 'Jenis Kendaraan', 'Waktu']
-        if not all(col in NewData.columns for col in required_columns):
-            raise ValueError("NewData is missing one or more required columns.")
 
         # Make predictions
         y_predictions = model_loaded.predict(NewData)
 
         # Append predicted statuses to DataFrame
         NewData['Status Pelaporan'] = y_predictions
-
         # Print relevant columns (adjust based on your needs)
         print(NewData[['Deskripsi Masalah', 'Jenis Kendaraan', 'Status Pelaporan','waktu']])
 
         # Return the necessary values
         return NewData['Deskripsi Masalah'].tolist(), NewData['Jenis Kendaraan'].tolist(),NewData['waktu'].tolist(), y_predictions.tolist()
+    
     except Exception as e:
         print(f"Error in result function: {str(e)}")
         return [], [], []

@@ -12,7 +12,7 @@ import pandas as pd
 app = Flask(__name__)
 
 # Configurationally define
-FILENAMEPETUGAS ='Model/Model_Ml/Petugas_Model.pkl'
+FILENAMEPETUGAS = 'Model/Model_Ml/Petugas_Model.pkl'
 FILENAMEPARKIR = 'Model/Model_Ml/Parkir_liar_Model.pkl'
     
 @app.route('/')
