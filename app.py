@@ -53,12 +53,16 @@ def petugas_parkir():
 @app.route('/Parkir_Liar', methods=['POST'])
 def parkir_Liar():
     global FILENAMEPARKIR
+    deskripsi_masalah = []
+    jenis_kendaraan = []
+    waktu = []
+    
     try:
         # Extract JSON data from the request
         data = request.get_json()
-        deskripsi_masalah = data.get('Deskripsi_Masalah', [])
-        jenis_kendaraan = data.get('Jenis_Kendaraan', [])
-        waktu = data.get('Waktu', [])
+        deskripsi_masalah = data.get('Deskripsi_Masalah')
+        jenis_kendaraan = data.get('Jenis_Kendaraan')
+        waktu = data.get('Waktu')
 
         # Call the Parkir result function
         result_values = pl.result(FILENAMEPARKIR, jenis_kendaraan, deskripsi_masalah, waktu)
