@@ -1,6 +1,5 @@
 pandas
 flask
-dotenv
 joblib
-scikitlearn
+scikit-learn
 gunicorn

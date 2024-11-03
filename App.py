@@ -5,14 +5,14 @@ import Petugas as pt
 import Parkir as pl
 import os
 import pandas as pd
-from dotenv import load_dotenv
+
 
 # Flask constructor takes the name of the current module (__name__) as an argument.
 app = Flask(__name__)
 
 # Configuration
-FILENAMEPETUGAS = os.getenv('PETUGAS_MODEL_PATH', 'Model/Model_Ml/Petugas_Model.pkl')
-FILENAMEPARKIR = os.getenv('PARKIR_MODEL_PATH', 'Model/Model_Ml/Parkir_liar_Model.pkl')  
+FILENAMEPETUGAS ='Model/Model_Ml/Petugas_Model.pkl'
+FILENAMEPARKIR = 'Model/Model_Ml/Parkir_liar_Model.pkl'
 
 
 @app.route('/')
