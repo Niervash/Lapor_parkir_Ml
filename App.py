@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # Configuration
 FILENAMEPETUGAS = os.getenv('PETUGAS_MODEL_PATH', 'Model/Model_Ml/Petugas_Model.pkl')
-FILENAMEPARKIR = os.getenv('PARKIR_MODEL_PATH', 'Model/Model_Ml/Parkir_Model.pkl')  # Corrected filename
+FILENAMEPARKIR = os.getenv('PARKIR_MODEL_PATH', 'Model/Model_Ml/Parkir_liar_Model.pkl')  
 
 
 @app.route('/')
@@ -73,4 +73,4 @@ def parkir_Liar():
 # Main driver function
 if __name__ == '__main__':
     # run() method of Flask class runs the application on the local development server.
-    app.run(debug=True)  # Set debug=False in production
+    app.run(debug=False)  # Set debug=False in production
