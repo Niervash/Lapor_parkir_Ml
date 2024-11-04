@@ -66,7 +66,7 @@ def parkir_Liar():
 
 
         # Panggil fungsi result untuk mendapatkan prediksi
-        Deskripsi_Masalah, Jenis_Kendaraan, waktu, y_predictions  = pl.result(FILENAMEPARKIR, jenis_kendaraan, deskripsi_masalah, waktu)
+        Deskripsi_Masalah, Jenis_Kendaraan, y_predictions, waktu  = pl.result(FILENAMEPARKIR, jenis_kendaraan, deskripsi_masalah, waktu)
         
         response_data = {
             'Deskripsi Masalah': Deskripsi_Masalah,
