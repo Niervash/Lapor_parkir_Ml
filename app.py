@@ -29,7 +29,7 @@ def petugas_parkir():
         # Ambil data dari request JSON
         data = request.json
         lokasi = data.get('Lokasi')
-        identitas_petugas = data.get('Identitas_Petugas')
+        identitas_petugas = data.get('identitas_Petugas')
 
         # Panggil fungsi result untuk mendapatkan prediksi
         Lokasi, Identitas_petugas, y_predictions = pt.result(FILENAMEPETUGAS, lokasi, identitas_petugas)
