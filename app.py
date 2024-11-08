@@ -30,19 +30,14 @@ def petugas_parkir():
         data = request.json
         lokasi = data.get('Lokasi')
         identitas_petugas = data.get('Identitas_Petugas')
-        print(data)    
-
-        # Pastikan lokasi dan identitas_petugas tidak kosong
-        if not lokasi or not identitas_petugas:
-            return make_response(jsonify({'error': 'Lokasi dan Identitas Petugas diperlukan'}), 400)
 
         # Panggil fungsi result untuk mendapatkan prediksi
-        lokasi, identitas_petugas, y_predictions = pt.result(FILENAMEPETUGAS, lokasi, identitas_petugas)
+        Lokasi, Identitas_petugas, y_predictions = pt.result(FILENAMEPETUGAS, lokasi, identitas_petugas)
 
         # Siapkan response data
         response_data = {
-            'Lokasi': lokasi,
-            'Identitas_Petugas': identitas_petugas,
+            'Lokasi': Lokasi,
+            'Identitas_Petugas': Identitas_petugas,
             'Status Pelaporan': y_predictions
         }
         return make_response(jsonify(response_data), 200)

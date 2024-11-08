@@ -23,10 +23,16 @@ def result(FILENAME, Lokasi, Identitas_Petugas):
         # Load the model
         Model_loaded = read_model(FILENAME)
 
-        # Check if inputs are empty and handle accordingly
-        if not Lokasi or not Identitas_Petugas:
-            print("Error: Lokasi or Identitas_Petugas is empty.")
-            return [], [], []  # Return empty lists if inputs are invalid
+
+        errors = []
+        if not Lokasi:
+            errors.append("Jenis_Kendaraan is empty.")
+        if not Identitas_Petugas:
+            errors.append("Waktu is empty.")
+
+        if errors:
+            print("Error:", " ".join(errors))
+            return [], []  # Return empty lists if inputs are invalid
 
         # Create a DataFrame for new data with the correct column names
         NewData = pd.DataFrame({
