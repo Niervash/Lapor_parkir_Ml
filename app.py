@@ -28,8 +28,8 @@ def petugas_parkir():
     try:
         # Ambil data dari request JSON
         data = request.json
-        lokasi = data.get('Lokasi')
-        identitas_petugas = data.get('Identitas_Petugas')
+        lokasi = data.get('lokasi')
+        identitas_petugas = data.get('identitas_Petugas')
         print(data)    
 
         # Pastikan lokasi dan identitas_petugas tidak kosong
