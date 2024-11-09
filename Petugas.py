@@ -47,7 +47,7 @@ def result(FILENAME, Lokasi, Identitas_Petugas):
         print(NewData[['Lokasi', 'Identitas Petugas', 'Status Pelaporan']])
 
         # Return the necessary values
-        return NewData['Lokasi'].tolist(), NewData['Identitas Petugas'].tolist(), y_predictions.tolist()
+        return NewData['Lokasi'].tolist(), NewData['Identitas Petugas'].tolist(), NewData['Status Pelaporan'].tolist()
     except Exception as e:
         print(f"Error in result function: {str(e)}")
         return [], [], []
