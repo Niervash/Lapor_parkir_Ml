@@ -50,7 +50,7 @@ def result(FILENAME, Jenis_Kendaraan, Deskripsi_Masalah, waktu, y_true=None):
         y_predictions = Model_loaded.predict(NewData)
 
         if hasattr(Model_loaded, 'predict_proba'):
-            confidence_scores = Model_loaded.predict_proba(NewData).max(axis=1)
+            confidence_scores = (Model_loaded.predict_proba(NewData).max(axis=1) * 100).round(2)
         else:
             confidence_scores = ['N/A'] * len(y_predictions)
 
