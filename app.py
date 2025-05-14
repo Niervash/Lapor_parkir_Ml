@@ -32,7 +32,7 @@ def petugas_parkir():
         identitas_petugas = data.get('Identitas_Petugas')
 
         # Panggil fungsi result untuk mendapatkan prediksi
-         Lokasi, Identitas_petugas, y_predictions, Akurasi_Prediksi = pt.result(
+        Lokasi, Identitas_petugas, y_predictions, Akurasi_Prediksi = pt.result(
             FILENAMEPETUGAS, lokasi, identitas_petugas
         )
 
