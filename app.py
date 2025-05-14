@@ -32,13 +32,16 @@ def petugas_parkir():
         identitas_petugas = data.get('Identitas_Petugas')
 
         # Panggil fungsi result untuk mendapatkan prediksi
-        Lokasi, Identitas_petugas, y_predictions = pt.result(FILENAMEPETUGAS, lokasi, identitas_petugas)
+         Lokasi, Identitas_petugas, y_predictions, Akurasi_Prediksi = pt.result(
+            FILENAMEPETUGAS, lokasi, identitas_petugas
+        )
 
         # Siapkan response data
         response_data = {
             'Lokasi': Lokasi,
             'Identitas_Petugas': Identitas_petugas,
-            'Status Pelaporan': y_predictions
+            'Status Pelaporan': y_predictions,
+            'Akurasi Prediksi': Akurasi_Prediksi
         }
         return make_response(jsonify(response_data), 200)
     except Exception as e:
