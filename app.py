@@ -40,8 +40,8 @@ def petugas_parkir():
         response_data = {
             'Lokasi': Lokasi,
             'Identitas_Petugas': Identitas_petugas,
-            'Status Pelaporan': y_predictions,
-            'Akurasi Prediksi': Akurasi_Prediksi
+            'Akurasi Prediksi': Akurasi_Prediksi,
+            'Status Pelaporan': y_predictions
         }
         return make_response(jsonify(response_data), 200)
     except Exception as e:
