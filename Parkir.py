@@ -1,6 +1,6 @@
 import joblib as jb
 import pandas as pd
-from sklearn.metrics import confusion_matrix as sk_confusion_matrix, classification_report as sk_classification_report
+from sklearn.metrics import confusion_matrix as sk_confusion_matrix, classification_report as sk_classification_report, accuracy_score
 
 def read_model(filename):
     model = jb.load(filename)
@@ -17,7 +17,7 @@ def classification_report(model, X_test, y_test):
     report = sk_classification_report(y_test, y_pred, output_dict=True)
     return report
 
-def result(FILENAME, Jenis_Kendaraan, Deskripsi_Masalah, waktu):
+def result(FILENAME, Jenis_Kendaraan, Deskripsi_Masalah, waktu, y_true=None):
     try:
         # Load the model
         model_loaded = read_model(FILENAME)
@@ -32,7 +32,7 @@ def result(FILENAME, Jenis_Kendaraan, Deskripsi_Masalah, waktu):
 
         if errors:
             print("Error:", " ".join(errors))
-            return [], [], []  # Return empty lists if inputs are invalid
+            return [], [], [], [], []  # Return empty lists if inputs are invalid
 
         # Create a DataFrame for new data with the correct column names
         NewData = pd.DataFrame({
@@ -44,14 +44,27 @@ def result(FILENAME, Jenis_Kendaraan, Deskripsi_Masalah, waktu):
         # Make predictions
         y_predictions = model_loaded.predict(NewData)
 
+        # Calculate accuracy if y_true is provided
+        if y_true is not None:
+            accuracy = accuracy_score(y_true, y_predictions)
+            NewData['Akurasi Prediksi'] = [accuracy] * len(y_predictions)
+        else:
+            NewData['Akurasi Prediksi'] = ['N/A'] * len(y_predictions)
+
         # Append predicted statuses to DataFrame
         NewData['Status Pelaporan'] = y_predictions
-        # Print relevant columns (adjust based on your needs)
-        print(NewData[['Deskripsi Masalah', 'Jenis Kendaraan', 'Status Pelaporan','waktu']])
+        print(NewData[['Deskripsi Masalah', 'Jenis Kendaraan', 'Status Pelaporan', 'Akurasi Prediksi', 'waktu']])
 
         # Return the necessary values
-        return NewData['Deskripsi Masalah'].tolist(), NewData['Jenis Kendaraan'].tolist(), NewData['Status Pelaporan'].tolist(),NewData['waktu'].tolist()
+        return (
+            NewData['Deskripsi Masalah'].tolist(),
+            NewData['Jenis Kendaraan'].tolist(),
+            NewData['Status Pelaporan'].tolist(),
+            NewData['waktu'].tolist(),
+            NewData['Akurasi Prediksi'].tolist()
+        )
     
     except Exception as e:
         print(f"Error in result function: {str(e)}")
-        return [], [], [], []
+        return [], [], [], [], []
+
