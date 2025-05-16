@@ -49,7 +49,7 @@ def result(FILENAME, Lokasi, Identitas_Petugas):
         y_predictions = Model_loaded.predict(NewData)
 
         if hasattr(Model_loaded, 'predict_proba'):
-            confidence_scores = (Model_loaded.predict_proba(NewData).max(axis=1) * 100).round(2)
+            confidence_scores = Model_loaded.predict_proba(NewData).max(axis=1)
 
         else:
             confidence_scores = [None] * len(y_predictions)
