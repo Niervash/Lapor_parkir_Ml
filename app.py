@@ -13,6 +13,10 @@ app = Flask(__name__)
 model_petugas, acc_petugas = pt.model, pt.saved_accuracy
 model_parkir, acc_parkir = pk.model, pk.saved_accuracy
 
+# Debug: cek apakah model berhasil load
+print("DEBUG: Petugas model:", "Loaded" if model_petugas else "Not loaded")
+print("DEBUG: Parkir model:", "Loaded" if model_parkir else "Not loaded")
+
 # ==============================
 # ROUTE: Home
 # ==============================
@@ -34,13 +38,16 @@ def petugas_parkir():
         if not data:
             return jsonify({"error": "No JSON data provided"}), 400
 
-        # fallback jika input kosong
         lokasi = data.get('Lokasi') or "Tidak diketahui"
         identitas_petugas = data.get('Identitas_Petugas') or "Tidak diketahui"
 
         Lokasi_list, Identitas_list, akurasi_list, status_list = pt.result(
             model_petugas, acc_petugas, lokasi, identitas_petugas
         )
+
+        # Cek list kosong untuk aman
+        if not Lokasi_list or not status_list:
+            return jsonify({"error": "Prediction failed, check model or input"}), 500
 
         response_data = {
             'Lokasi': Lokasi_list[0],
@@ -63,7 +70,6 @@ def parkir_liar():
         if not data:
             return jsonify({"error": "No JSON data provided"}), 400
 
-        # fallback jika input kosong
         deskripsi = data.get('Deskripsi_Masalah') or "Tidak ada deskripsi"
         jenis_kendaraan = data.get('Jenis_Kendaraan') or "Tidak diketahui"
         waktu = data.get('Waktu') or "2026-01-01 00:00:00"
@@ -71,6 +77,10 @@ def parkir_liar():
         Deskripsi_list, Jenis_list, Waktu_list, akurasi_list, status_list = pk.result(
             model_parkir, acc_parkir, deskripsi, jenis_kendaraan, waktu
         )
+
+        # Cek list kosong untuk aman
+        if not Deskripsi_list or not status_list:
+            return jsonify({"error": "Prediction failed, check model or input"}), 500
 
         response_data = {
             'Deskripsi_Masalah': Deskripsi_list[0],
@@ -89,4 +99,4 @@ def parkir_liar():
 # Main
 # ==============================
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)  # debug=True untuk development
