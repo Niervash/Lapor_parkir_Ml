@@ -1,84 +1,82 @@
-# Importing flask module in the project is mandatory
-# An object of Flask class is our WSGI application.
-from flask import Flask, jsonify, make_response, request 
-import joblib as jb
+from flask import Flask, jsonify, make_response, request
 import Petugas as pt
-import Parkir as pl
-import os
-import pandas as pd
+import Parkir as pk
 
-
-# Flask constructor takes the name of the current module (__name__) as an argument.
 app = Flask(__name__)
 
-# Configurationally define
-FILENAMEPETUGAS = 'Model/Model_Ml/Petugas_Model.pkl'
-FILENAMEPARKIR = 'Model/Model_Ml/Parkir_liar_Model.pkl'
-    
-@app.route('/')
-def hello_world():
-    return 'Hello World !'
+FILENAMEPARKIR = 'Model/model_new/model_knn_petugas.joblib'
+FILENAMEPETUGAS = 'Model/model_new/knn_parkir_model_eval.joblib'
+# ==============================
+# Load Models Sekali Saja
+# ==============================
+model_petugas, acc_petugas = pt.read_model(FILENAMEPARKIR)
+model_parkir, acc_parkir = pk.read_model(FILENAMEPETUGAS)
 
-# Petugas Parkir
+# ==============================
+# Route Home
+# ==============================
+@app.route('/')
+def home():
+    return jsonify({
+        "message": "API for Petugas & Parkir Liar is running 🚀",
+        "Model Accuracy Petugas": acc_petugas,
+        "Model Accuracy Parkir": acc_parkir
+    })
+
+# ==============================
+# Route Petugas Parkir
+# ==============================
 @app.route('/Petugas_parkir', methods=['POST'])
 def petugas_parkir():
-    global FILENAMEPETUGAS
-    lokasi = []
-    identitas_petugas = []
     try:
-        # Ambil data dari request JSON
         data = request.json
         lokasi = data.get('Lokasi')
         identitas_petugas = data.get('Identitas_Petugas')
 
-        # Panggil fungsi result untuk mendapatkan prediksi
-        Lokasi, Identitas_petugas, akurasi, y_predictions = pt.result(
-            FILENAMEPETUGAS, lokasi, identitas_petugas
+        # Panggil fungsi result dari petugas.py
+        Lokasi, Identitas, akurasi, status = pt.result(
+            model_petugas, acc_petugas, lokasi, identitas_petugas
         )
-        # Siapkan response data
+
         response_data = {
-            'Lokasi': Lokasi,
-            'Identitas_Petugas': Identitas_petugas,
-            'Akurasi Prediksi': akurasi,
-            'Status Pelaporan': y_predictions
+            'Lokasi': Lokasi[0] if Lokasi else None,
+            'Identitas_Petugas': Identitas[0] if Identitas else None,
+            'Akurasi Prediksi (%)': akurasi[0] if akurasi else None,
+            'Status Pelaporan': status[0] if status else None
         }
         return make_response(jsonify(response_data), 200)
+
     except Exception as e:
         return make_response(jsonify({'error': str(e)}), 500)
 
-# Parkir 
+# ==============================
+# Route Parkir Liar
+# ==============================
 @app.route('/Parkir_Liar', methods=['POST'])
-def parkir_Liar():
-    global FILENAMEPARKIR
-    deskripsi_masalah = []
-    jenis_kendaraan = []
-    waktu = []
-    
+def parkir_liar():
     try:
-        # Extract JSON data from the request
         data = request.json
-        deskripsi_masalah = data.get('Deskripsi_Masalah')
+        deskripsi = data.get('Deskripsi')
         jenis_kendaraan = data.get('Jenis_Kendaraan')
-        waktu = data.get('Waktu')
+        waktu = data.get('waktu')
 
+        # Panggil fungsi result dari perkir.py
+        Deskripsi_List, Jenis_List, Waktu_List, akurasi_list, status_list = pk.result(
+            model_parkir, acc_parkir, deskripsi, jenis_kendaraan, waktu
+        )
 
-        # Panggil fungsi result untuk mendapatkan prediksi
-        Deskripsi_Masalah, Jenis_Kendaraan, y_predictions, waktu ,akurasi = pl.result(FILENAMEPARKIR, jenis_kendaraan, deskripsi_masalah, waktu)
-        
         response_data = {
-            'Deskripsi Masalah': Deskripsi_Masalah,
-            'Jenis Kendaraan': Jenis_Kendaraan,
-            'Akurasi Prediksi': akurasi,
-            'waktu': waktu,
-            'Status Pelaporan': y_predictions
+            'Deskripsi': Deskripsi_List[0] if Deskripsi_List else None,
+            'Jenis_Kendaraan': Jenis_List[0] if Jenis_List else None,
+            'waktu': Waktu_List[0] if Waktu_List else None,
+            'Akurasi Prediksi (%)': akurasi_list[0] if akurasi_list else None,
+            'Status Pelaporan': status_list[0] if status_list else None
         }
-
         return make_response(jsonify(response_data), 200)
+
     except Exception as e:
         return make_response(jsonify({'error': str(e)}), 500)
-    
 
-# Main driver function
+
 if __name__ == '__main__':
-    # run() method of Flask class runs the application on the local development server.
-    app.run(debug=False)  # Set debug=False in production
+    app.run(debug=True)
