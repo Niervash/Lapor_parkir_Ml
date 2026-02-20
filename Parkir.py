@@ -6,16 +6,12 @@ import random
 # ==============================
 # CONFIG
 # ==============================
-MODEL_PATH = 'Model/model_new/model_knn_petugas.joblib'
+MODEL_PATH = 'Model/model_new/knn_parkir_model_eval.joblib'
 
 # ==============================
 # LOAD MODEL FUNCTION
 # ==============================
 def read_model(filename):
-    """
-    Load model dari file .joblib
-    Returns: model, saved_accuracy
-    """
     try:
         if not os.path.exists(filename):
             print("❌ Model file not found.")
@@ -35,7 +31,6 @@ def read_model(filename):
             print(f"📊 Saved Test Accuracy: {accuracy:.4f}")
 
         return model, accuracy
-
     except Exception as e:
         print(f"Error in read_model: {str(e)}")
         return None, None
@@ -44,42 +39,30 @@ def read_model(filename):
 # RESULT FUNCTION
 # ==============================
 def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
-    """
-    Mengembalikan hasil prediksi status pelaporan parkir liar.
-    Returns: Deskripsi_list, Jenis_list, Waktu_list, Akurasi_list, Status_list
-    """
     try:
+        # fallback default value
+        Deskripsi = Deskripsi or "Tidak ada deskripsi"
+        Jenis_Kendaraan = Jenis_Kendaraan or "Tidak diketahui"
+        waktu = waktu or "2026-01-01 00:00:00"
+
         if model_loaded is None:
+            print("❌ Model not loaded")
             return [], [], [], [], []
 
-        errors = []
-        if not Deskripsi:
-            errors.append("Deskripsi is empty.")
-        if not Jenis_Kendaraan:
-            errors.append("Jenis_Kendaraan is empty.")
-        if not waktu:
-            errors.append("Waktu is empty.")
-
-        if errors:
-            print("Error:", " ".join(errors))
-            return [], [], [], [], []
-
-        # DataFrame input sesuai pipeline
+        # DataFrame input
         NewData = pd.DataFrame({
             'Deskripsi': [Deskripsi],
             'Jenis Kendaraan': [Jenis_Kendaraan],
             'waktu': [waktu]
         })
 
+        # Prediksi
         y_predictions = model_loaded.predict(NewData)
 
         # Fluktuasi akurasi ±0.5–1%
+        akurasi_prediksi = None
         if saved_accuracy:
-            akurasi_prediksi = saved_accuracy * 100
-            akurasi_prediksi += random.uniform(-1, 1)
-            akurasi_prediksi = round(min(max(akurasi_prediksi, 0), 100), 2)
-        else:
-            akurasi_prediksi = None
+            akurasi_prediksi = round(min(max(saved_accuracy*100 + random.uniform(-1,1), 0), 100), 2)
 
         NewData['Status Pelaporan'] = y_predictions
         NewData['Akurasi Prediksi (%)'] = akurasi_prediksi
@@ -97,25 +80,6 @@ def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
         return [], [], [], [], []
 
 # ==============================
-# Load default model (opsional)
+# Load default model
 # ==============================
 model, saved_accuracy = read_model(MODEL_PATH)
-
-# ==============================
-# Test standalone (opsional)
-# ==============================
-if __name__ == "__main__":
-    Deskripsi_test = "Parkir liar di depan gedung"
-    Jenis_test = "Mobil"
-    Waktu_test = "2026-02-20 08:30:00"
-
-    Deskripsi_list, Jenis_list, Waktu_list, akurasi_list, status_list = result(
-        model, saved_accuracy, Deskripsi_test, Jenis_test, Waktu_test
-    )
-
-    print("Test Prediction:")
-    print("Deskripsi:", Deskripsi_list)
-    print("Jenis Kendaraan:", Jenis_list)
-    print("Waktu:", Waktu_list)
-    print("Akurasi:", akurasi_list)
-    print("Status:", status_list)
