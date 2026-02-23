@@ -1,5 +1,4 @@
-from flask import Flask, jsonify, make_response, request
-import os
+from flask import Flask, jsonify, request
 import Petugas as pt
 import Parkir as pk
 
@@ -16,8 +15,8 @@ print("🚀 Loading models...")
 model_petugas, acc_petugas = pt.read_model(pt.MODEL_PATH)
 model_parkir, acc_parkir = pk.read_model(pk.MODEL_PATH)
 
-print("DEBUG: Petugas model:", "Loaded ✅" if model_petugas else "Not loaded ❌")
-print("DEBUG: Parkir model:", "Loaded ✅" if model_parkir else "Not loaded ❌")
+print("Petugas model:", "Loaded ✅" if model_petugas else "Not loaded ❌")
+print("Parkir model:", "Loaded ✅" if model_parkir else "Not loaded ❌")
 
 
 # ==============================
@@ -97,7 +96,7 @@ def parkir_liar():
 
 
 # ==============================
-# ERROR HANDLER GLOBAL
+# GLOBAL ERROR HANDLER
 # ==============================
 @app.errorhandler(Exception)
 def handle_exception(e):
@@ -108,4 +107,4 @@ def handle_exception(e):
 # MAIN
 # ==============================
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)

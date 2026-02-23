@@ -1,13 +1,11 @@
 import pickle
 import pandas as pd
-import os
 import random
 
 # ==============================
-# CONFIG
+# CONFIG (LANGSUNG PATH SAJA)
 # ==============================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, 'Model', 'Model_ML', 'parkir.pkl')
+MODEL_PATH = "Model/Model_ML/parkir.pkl"
 
 
 # ==============================
@@ -15,14 +13,10 @@ MODEL_PATH = os.path.join(BASE_DIR, 'Model', 'Model_ML', 'parkir.pkl')
 # ==============================
 def read_model(filename):
     try:
-        if not os.path.exists(filename):
-            print("❌ Model file not found:", filename)
-            return None, None
-
         with open(filename, 'rb') as file:
             model_data = pickle.load(file)
 
-        # Jika disimpan sebagai dictionary
+        # Jika model disimpan dalam dictionary
         if isinstance(model_data, dict):
             model = model_data.get("model")
             accuracy = model_data.get("accuracy_test")
@@ -42,13 +36,17 @@ def read_model(filename):
 
         return model, accuracy
 
+    except FileNotFoundError:
+        print(f"❌ Model file not found: {filename}")
+        return None, None
+
     except Exception as e:
         print(f"❌ Error in read_model: {str(e)}")
         return None, None
 
 
 # ==============================
-# RESULT FUNCTION
+# RESULT FUNCTION (TETAP SAMA)
 # ==============================
 def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
     try:
@@ -56,34 +54,25 @@ def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
             print("❌ Model not loaded")
             return [], [], [], [], []
 
-        # ==============================
-        # DEFAULT VALUE
-        # ==============================
+        # Default value
         Deskripsi = Deskripsi if Deskripsi else "Tidak ada deskripsi"
         Jenis_Kendaraan = Jenis_Kendaraan if Jenis_Kendaraan else "Tidak diketahui"
         waktu = waktu if waktu else "2026-01-01 00:00:00"
 
-        # ==============================
-        # CREATE INPUT DATAFRAME
-        # SESUAI TRAINING (HANYA 2 KOLOM)
-        # ==============================
+        # Buat DataFrame sesuai training (2 kolom saja)
         input_data = pd.DataFrame({
             'Deskripsi': [Deskripsi],
             'Jenis Kendaraan': [Jenis_Kendaraan]
         })
 
-        # ==============================
-        # PREDICTION
-        # ==============================
+        # Prediction
         prediction = model_loaded.predict(input_data)
 
         if len(prediction) == 0:
             print("❌ Prediction empty")
             return [], [], [], [], []
 
-        # ==============================
-        # FLUCTUATING ACCURACY
-        # ==============================
+        # Fluktuasi akurasi (opsional)
         akurasi_prediksi = None
         if saved_accuracy is not None:
             fluktuasi = random.uniform(-1, 1)
@@ -92,9 +81,6 @@ def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
                 2
             )
 
-        # ==============================
-        # FINAL OUTPUT
-        # ==============================
         hasil_df = pd.DataFrame({
             'Deskripsi': [Deskripsi],
             'Jenis Kendaraan': [Jenis_Kendaraan],

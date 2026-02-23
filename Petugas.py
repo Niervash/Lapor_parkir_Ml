@@ -1,13 +1,11 @@
 import pickle
 import pandas as pd
-import os
 import random
 
 # ==============================
-# CONFIG
+# CONFIG (LANGSUNG PATH SAJA)
 # ==============================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, 'Model', 'Model_ML', 'petugas.pkl')
+MODEL_PATH = "Model/Model_ML/petugas.pkl"
 
 
 # ==============================
@@ -15,14 +13,10 @@ MODEL_PATH = os.path.join(BASE_DIR, 'Model', 'Model_ML', 'petugas.pkl')
 # ==============================
 def read_model(filename):
     try:
-        if not os.path.exists(filename):
-            print("❌ Model file not found:", filename)
-            return None, None
-
         with open(filename, 'rb') as file:
             model_data = pickle.load(file)
 
-        # Jika model disimpan dalam dictionary
+        # Jika model disimpan sebagai dictionary
         if isinstance(model_data, dict):
             model = model_data.get("model")
             accuracy = model_data.get("accuracy_test")
@@ -30,7 +24,7 @@ def read_model(filename):
             model = model_data
             accuracy = None
 
-        # Validasi object model
+        # Validasi model
         if model is None or not hasattr(model, "predict"):
             print("❌ Invalid model object inside file.")
             return None, None
@@ -41,6 +35,10 @@ def read_model(filename):
             print(f"📊 Saved Test Accuracy: {accuracy:.4f}")
 
         return model, accuracy
+
+    except FileNotFoundError:
+        print(f"❌ Model file not found: {filename}")
+        return None, None
 
     except Exception as e:
         print(f"❌ Error in read_model: {str(e)}")
@@ -56,33 +54,24 @@ def result(model_loaded, saved_accuracy, Lokasi, Identitas_Petugas):
             print("❌ Model not loaded.")
             return [], [], [], []
 
-        # ==============================
-        # DEFAULT VALUE
-        # ==============================
+        # Default value
         Lokasi = Lokasi if Lokasi else "Tidak diketahui"
         Identitas_Petugas = Identitas_Petugas if Identitas_Petugas else "Tidak diketahui"
 
-        # ==============================
-        # CREATE INPUT DATAFRAME
-        # SESUAI TRAINING
-        # ==============================
+        # Buat DataFrame sesuai training
         input_data = pd.DataFrame({
             'Lokasi': [Lokasi],
             'Identitas Petugas': [Identitas_Petugas]
         })
 
-        # ==============================
-        # PREDIKSI
-        # ==============================
+        # Prediction
         prediction = model_loaded.predict(input_data)
 
         if len(prediction) == 0:
             print("❌ Prediction empty")
             return [], [], [], []
 
-        # ==============================
-        # FLUCTUATING ACCURACY
-        # ==============================
+        # Fluktuasi akurasi (opsional)
         akurasi_prediksi = None
         if saved_accuracy is not None:
             fluktuasi = random.uniform(-1, 1)
@@ -91,9 +80,6 @@ def result(model_loaded, saved_accuracy, Lokasi, Identitas_Petugas):
                 2
             )
 
-        # ==============================
-        # FINAL OUTPUT
-        # ==============================
         hasil_df = pd.DataFrame({
             'Lokasi': [Lokasi],
             'Identitas Petugas': [Identitas_Petugas],
