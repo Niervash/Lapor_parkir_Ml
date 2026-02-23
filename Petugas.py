@@ -6,7 +6,8 @@ import random
 # ==============================
 # CONFIG
 # ==============================
-MODEL_PATH = 'Model/model_new/model_knn_petugas.pkl'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'Model', 'model_new', 'model_knn_petugas.pkl')
 
 
 # ==============================
@@ -15,7 +16,7 @@ MODEL_PATH = 'Model/model_new/model_knn_petugas.pkl'
 def read_model(filename):
     try:
         if not os.path.exists(filename):
-            print("❌ Model file not found.")
+            print("❌ Model file not found:", filename)
             return None, None
 
         with open(filename, 'rb') as file:
@@ -29,8 +30,9 @@ def read_model(filename):
             model = model_data
             accuracy = None
 
-        if model is None:
-            print("❌ Model object not found inside file.")
+        # Validasi object model
+        if model is None or not hasattr(model, "predict"):
+            print("❌ Invalid model object inside file.")
             return None, None
 
         print(f"✅ Model loaded from {filename}")
@@ -54,38 +56,33 @@ def result(model_loaded, saved_accuracy, Lokasi, Identitas_Petugas):
             print("❌ Model not loaded.")
             return [], [], [], []
 
-        # Default fallback value
+        # ==============================
+        # DEFAULT VALUE
+        # ==============================
         Lokasi = Lokasi if Lokasi else "Tidak diketahui"
         Identitas_Petugas = Identitas_Petugas if Identitas_Petugas else "Tidak diketahui"
 
-        # Buat DataFrame input sesuai nama kolom training
+        # ==============================
+        # CREATE INPUT DATAFRAME
+        # SESUAI TRAINING
+        # ==============================
         input_data = pd.DataFrame({
             'Lokasi': [Lokasi],
             'Identitas Petugas': [Identitas_Petugas]
         })
 
-        # ==========================
-        # VALIDASI KOLOM SESUAI MODEL
-        # ==========================
-        if hasattr(model_loaded, "feature_names_in_"):
-            expected_columns = list(model_loaded.feature_names_in_)
-
-            # Tambahkan kolom kosong jika ada kolom yang kurang
-            for col in expected_columns:
-                if col not in input_data.columns:
-                    input_data[col] = ""
-
-            # Urutkan kolom sesuai model
-            input_data = input_data[expected_columns]
-
-        # ==========================
+        # ==============================
         # PREDIKSI
-        # ==========================
+        # ==============================
         prediction = model_loaded.predict(input_data)
 
-        # ==========================
-        # AKURASI FLUKTUASI
-        # ==========================
+        if len(prediction) == 0:
+            print("❌ Prediction empty")
+            return [], [], [], []
+
+        # ==============================
+        # FLUCTUATING ACCURACY
+        # ==============================
         akurasi_prediksi = None
         if saved_accuracy is not None:
             fluktuasi = random.uniform(-1, 1)
@@ -94,15 +91,21 @@ def result(model_loaded, saved_accuracy, Lokasi, Identitas_Petugas):
                 2
             )
 
-        # Tambahkan ke dataframe hasil
-        input_data['Status Pelaporan'] = prediction[0]
-        input_data['Akurasi Prediksi (%)'] = akurasi_prediksi
+        # ==============================
+        # FINAL OUTPUT
+        # ==============================
+        hasil_df = pd.DataFrame({
+            'Lokasi': [Lokasi],
+            'Identitas Petugas': [Identitas_Petugas],
+            'Status Pelaporan': [prediction[0]],
+            'Akurasi Prediksi (%)': [akurasi_prediksi]
+        })
 
         return (
-            input_data['Lokasi'].tolist(),
-            input_data['Identitas Petugas'].tolist(),
-            [akurasi_prediksi],
-            input_data['Status Pelaporan'].tolist()
+            hasil_df['Lokasi'].tolist(),
+            hasil_df['Identitas Petugas'].tolist(),
+            hasil_df['Akurasi Prediksi (%)'].tolist(),
+            hasil_df['Status Pelaporan'].tolist()
         )
 
     except Exception as e:
@@ -114,21 +117,3 @@ def result(model_loaded, saved_accuracy, Lokasi, Identitas_Petugas):
 # LOAD DEFAULT MODEL
 # ==============================
 model, saved_accuracy = read_model(MODEL_PATH)
-
-
-# ==============================
-# OPTIONAL: TEST MANUAL
-# ==============================
-if __name__ == "__main__":
-    lokasi, identitas, akurasi, status = result(
-        model,
-        saved_accuracy,
-        "Jl. Imam Bonjol",
-        "Petugas A"
-    )
-
-    print("\n=== HASIL PREDIKSI ===")
-    print("Lokasi:", lokasi)
-    print("Identitas:", identitas)
-    print("Akurasi:", akurasi)
-    print("Status:", status)

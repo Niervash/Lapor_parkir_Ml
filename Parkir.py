@@ -6,7 +6,8 @@ import random
 # ==============================
 # CONFIG
 # ==============================
-MODEL_PATH = 'Model/model_new/knn_parkir_model_eval.pkl'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'Model', 'model_new', 'knn_parkir_model_eval.pkl')
 
 
 # ==============================
@@ -15,12 +16,13 @@ MODEL_PATH = 'Model/model_new/knn_parkir_model_eval.pkl'
 def read_model(filename):
     try:
         if not os.path.exists(filename):
-            print("❌ Model file not found.")
+            print("❌ Model file not found:", filename)
             return None, None
 
         with open(filename, 'rb') as file:
             model_data = pickle.load(file)
 
+        # Jika disimpan sebagai dictionary
         if isinstance(model_data, dict):
             model = model_data.get("model")
             accuracy = model_data.get("accuracy_test")
@@ -28,8 +30,9 @@ def read_model(filename):
             model = model_data
             accuracy = None
 
-        if model is None:
-            print("❌ Model object not found inside file.")
+        # Validasi model
+        if model is None or not hasattr(model, "predict"):
+            print("❌ Invalid model object inside file.")
             return None, None
 
         print(f"✅ Model loaded from {filename}")
@@ -62,26 +65,12 @@ def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
 
         # ==============================
         # CREATE INPUT DATAFRAME
+        # SESUAI TRAINING (HANYA 2 KOLOM)
         # ==============================
         input_data = pd.DataFrame({
             'Deskripsi': [Deskripsi],
-            'Jenis Kendaraan': [Jenis_Kendaraan],
-            'waktu': [waktu]
+            'Jenis Kendaraan': [Jenis_Kendaraan]
         })
-
-        # ==============================
-        # SAMAKAN KOLOM DENGAN MODEL TRAINING
-        # ==============================
-        if hasattr(model_loaded, "feature_names_in_"):
-            expected_columns = list(model_loaded.feature_names_in_)
-
-            # Tambah kolom kosong jika kurang
-            for col in expected_columns:
-                if col not in input_data.columns:
-                    input_data[col] = ""
-
-            # Urutkan kolom sesuai model
-            input_data = input_data[expected_columns]
 
         # ==============================
         # PREDICTION
@@ -110,7 +99,7 @@ def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
             'Deskripsi': [Deskripsi],
             'Jenis Kendaraan': [Jenis_Kendaraan],
             'waktu': [waktu],
-            'Status Pelaporan': [prediction[0]],
+            'Kategori': [prediction[0]],
             'Akurasi Prediksi (%)': [akurasi_prediksi]
         })
 
@@ -119,7 +108,7 @@ def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
             hasil_df['Jenis Kendaraan'].tolist(),
             hasil_df['waktu'].tolist(),
             hasil_df['Akurasi Prediksi (%)'].tolist(),
-            hasil_df['Status Pelaporan'].tolist()
+            hasil_df['Kategori'].tolist()
         )
 
     except Exception as e:
@@ -131,23 +120,3 @@ def result(model_loaded, saved_accuracy, Deskripsi, Jenis_Kendaraan, waktu):
 # LOAD DEFAULT MODEL
 # ==============================
 model, saved_accuracy = read_model(MODEL_PATH)
-
-
-# ==============================
-# OPTIONAL TEST
-# ==============================
-if __name__ == "__main__":
-    des, jenis, waktu_out, akurasi, status = result(
-        model,
-        saved_accuracy,
-        "Parkir di badan jalan",
-        "Motor",
-        "2026-02-20 10:30:00"
-    )
-
-    print("\n=== HASIL PREDIKSI ===")
-    print("Deskripsi:", des)
-    print("Jenis Kendaraan:", jenis)
-    print("Waktu:", waktu_out)
-    print("Akurasi:", akurasi)
-    print("Status:", status)
