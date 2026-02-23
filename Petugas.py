@@ -7,7 +7,7 @@ import random
 # CONFIG
 # ==============================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, 'Model', 'model_new', 'model_knn_petugas.pkl')
+MODEL_PATH = os.path.join(BASE_DIR, 'Model', 'Model_ML', 'petugas.pkl')
 
 
 # ==============================
