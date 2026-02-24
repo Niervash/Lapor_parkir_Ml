@@ -5,7 +5,7 @@ import random
 # ==============================
 # CONFIG (LANGSUNG PATH SAJA)
 # ==============================
-MODEL_PATH = "./model/model_petugas.pkl"
+MODEL_PATH = "./model_fix/model_petugas.pkl"
 
 
 # ==============================

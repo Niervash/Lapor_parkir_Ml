@@ -5,7 +5,7 @@ import random
 # ==============================
 # CONFIG (LANGSUNG PATH SAJA)
 # ==============================
-MODEL_PATH = "./model/model_parkir.pkl"
+MODEL_PATH = "./model_fix/model_parkir.pkl"
 
 
 # ==============================
