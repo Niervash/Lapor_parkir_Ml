@@ -58,8 +58,8 @@ def petugas_parkir():
     return jsonify({
         "Lokasi": Lokasi_list[0],
         "Identitas_Petugas": Identitas_list[0],
-        "Akurasi_Prediksi": akurasi_list[0],
-        "Status_Pelaporan": status_list[0]
+        "Akurasi Prediksi": akurasi_list[0],
+        "Status Pelaporan": status_list[0]
     })
 
 
@@ -90,8 +90,8 @@ def parkir_liar():
         "Deskripsi_Masalah": Deskripsi_list[0],
         "Jenis_Kendaraan": Jenis_list[0],
         "Waktu": Waktu_list[0],
-        "Akurasi_Prediksi": akurasi_list[0],
-        "Status_Pelaporan": status_list[0]
+        "Akurasi Prediksi": akurasi_list[0],
+        "Status Pelaporan": status_list[0]
     })
 
 
